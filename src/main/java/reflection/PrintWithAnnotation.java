@@ -2,7 +2,7 @@ package reflection;
 
 import java.lang.reflect.Method;
 
-public class Test {
+public class PrintWithAnnotation {
 
     public static Object printHelloWorld(Object o) {
         Class<?> objectClass = o.getClass();
