@@ -1,14 +1,24 @@
 package second.tasks.jdbc.hibernate.dao.jdbc;
 
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import second.tasks.jdbc.hibernate.dao.connection.ConnectionManager;
 import second.tasks.jdbc.hibernate.dao.user.User;
 import second.tasks.jdbc.hibernate.dao.user.UserDAO;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.sql.*;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class UserDAOJDBC implements UserDAO {
-
+    private final static int PAGE_SIZE = 10;
+    private final Logger LOGGER = LoggerFactory.getLogger(ConnectionManager.class);
 
     @Override
     public User findById(Integer id) throws SQLException {
@@ -69,9 +79,51 @@ public class UserDAOJDBC implements UserDAO {
     }
 
     @Override
-    public List<User> getListOfUsers() {
+    public Queue<User> getUserQueue(User filter) throws SQLException {
+        Queue<User> users = new ConcurrentLinkedQueue<>();
+        Thread myThready = new Thread(() -> {
+            ConnectionManager connectionManager = new ConnectionManager();
+            try (Connection connection = connectionManager.getConnection();
+                 Statement countStatement = connection.createStatement();
+                 Statement statement = connection.createStatement();) {
+                String SQL_SUBLIST = getQuery(filter);
+                ResultSet rs = countStatement.executeQuery("select count(*) from jdbc_hibernate.users");
+                rs.next();
+                int count = rs.getInt(1);
+                int rowNumber = 0;
+                while (rowNumber < count) {
+                    String sql = String.format(SQL_SUBLIST, PAGE_SIZE, rowNumber);
+                    ResultSet resultSet = statement.executeQuery(sql);
+                    List<User> userList = new ArrayList<>();
+                    while (resultSet.next()) {
+                        userList.add(getUserFromResultSet(resultSet));
+                    }
+                    System.out.println("10 rows added to queue");
+                    users.addAll(userList);
+                    rowNumber += PAGE_SIZE;
+                }
+            } catch (SQLException e) {
+                LOGGER.error("Exception while getting the queue of users", e);
+            }
+        });
+        myThready.start();
+        return users;
+    }
 
-        return null;
+    private String getQuery(User filter) {
+        return "SELECT id, " +
+                "name as name," +
+                "surname as surname," +
+                "nickname as nickname," +
+                "password as password ," +
+                "registration_date as registration_date " +
+                "FROM jdbc_hibernate.users " +
+                "WHERE " +
+                "(" + filter.getName() + " IS NULL OR name = '" + filter.getName() + "' ) AND" +
+                "(" + filter.getNickname() + " IS NULL or nickname = '" + filter.getNickname() + "'  ) AND" +
+                "(" + filter.getSurname() + " IS NULL or surname = '" + filter.getSurname() + "') AND" +
+                "(" + filter.getPassword() + "  IS NULL or password = '" + filter.getPassword() + "')" +
+                "ORDER BY id LIMIT %d OFFSET %d";
     }
 
     private User getUserFromResultSet(ResultSet resultSet) throws SQLException {

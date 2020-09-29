@@ -1,6 +1,8 @@
 package second.tasks.jdbc.hibernate.dao.user;
 
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,6 +12,18 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
+@FilterDefs({
+        @FilterDef(name = "userNameFilter", parameters = {@ParamDef(name = "name", type = "string")}),
+        @FilterDef(name = "userSurnameFilter", parameters = {@ParamDef(name = "surname", type = "string")}),
+        @FilterDef(name = "userNicknameFilter", parameters = {@ParamDef(name = "nickname", type = "string")}),
+        @FilterDef(name = "userPasswordFilter", parameters = {@ParamDef(name = "password", type = "string")}),
+})
+@Filters({
+        @Filter(name = "userNameFilter", condition = ":name = name"),
+        @Filter(name = "userSurnameFilter", condition = ":surname = surname"),
+        @Filter(name = "userNicknameFilter", condition = ":nickname = nickname"),
+        @Filter(name = "userPasswordFilter", condition = ":password = password"),
+})
 public class User {
     @Id
     @GeneratedValue

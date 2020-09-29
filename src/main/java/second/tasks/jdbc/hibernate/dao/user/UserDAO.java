@@ -1,7 +1,7 @@
 package second.tasks.jdbc.hibernate.dao.user;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Queue;
 
 public interface UserDAO {
 
@@ -13,6 +13,6 @@ public interface UserDAO {
 
     void update(Integer userToUpdateId, User newUser) throws SQLException;
 
-    List<User> getListOfUsers() throws SQLException;
+    Queue<User> getUserQueue(User user) throws SQLException;
 
 }
