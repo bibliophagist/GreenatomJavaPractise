@@ -20,7 +20,7 @@ public class ConnectionManager {
 
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
-    private static final String PASS = "5264552";
+    private static final String PASS = "postgres";
     private static SessionFactory sessionFactory;
     private final Connection connection;
 

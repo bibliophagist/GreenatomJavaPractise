@@ -23,6 +23,7 @@
     <modules>
         <module>first.tasks</module>
         <module>second.tasks</module>
+        <module>third.tasks</module>
     </modules>
 
     <dependencies>
