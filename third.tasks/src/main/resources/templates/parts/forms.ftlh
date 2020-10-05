@@ -14,9 +14,10 @@
 </#macro>
 
 <#macro add>
-    <form method="post" action="/add">
+    <form method="post" action="/add" enctype="multipart/form-data">
         <input type="text" name="text" placeholder="Введите сообщение"/>
         <input type="text" name="tag" placeholder="Тэг">
+        <input type="file" name="file">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
         <button type="submit">Добавить сообщение</button>
     </form>
@@ -26,5 +27,22 @@
     <form method="get" action="/main">
         <input type="text" name="tag" value="${RequestParameters.tag!""}">
         <button type="submit">Найти</button>
+    </form>
+</#macro>
+
+<#macro editor>
+    <form action="/user" method="post">
+        <input type="text" value="${user.username}" name="username">
+        <#list roles as role>
+            <div>
+                <label>
+                    <input type="checkbox" name="${role}" ${user.roleSet?seq_contains(role)?string("checked", "")}>
+                    ${role}
+                </label>
+            </div>
+        </#list>
+        <input type="hidden" value="${user.id}" name="userId">
+        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+        <button type="submit">Save</button>
     </form>
 </#macro>
