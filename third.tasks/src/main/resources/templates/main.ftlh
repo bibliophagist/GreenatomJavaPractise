@@ -2,31 +2,31 @@
 <#import "parts/forms.ftlh" as l>
 <@c.page>
     <div>
-        <div>
-            <@l.logout></@l.logout>
-            <span> <a href="/user"> User list</a></span>
-        </div>
+        <@l.filter></@l.filter>
         <div>
             <@l.add></@l.add>
         </div>
 
-        <div> Список сообщений</div>
-        <@l.filter></@l.filter>
+        <div class="card-columns">
+            <#list messages as message>
+                <div class="card my-3">
+                    <div class="card-img-top">
+                        <#if message.filename??>
+                            <img src="/img/${message.filename}">
+                        </#if>
+                    </div>
+                    <div class="m-3">
+                        <span>${message.text}</span>
 
-        <#list messages as message>
-            <div>
-                <b>${message.id}</b>
-                <span>${message.text}</span>
-                <i>${message.tag}</i>
-                <strong>${message.authorName}</strong>
-                <div>
-                    <#if message.filename??>
-                        <img src="/img/${message.filename}">
-                    </#if>
+                        <i>${message.tag}</i>
+                    </div>
+                    <div class="card-footer text-muted">
+                        ${message.authorName}
+                    </div>
                 </div>
-            </div>
-        <#else >
-            No messages
-        </#list>
+            <#else >
+                No messages
+            </#list>
+        </div>
     </div>
 </@c.page>

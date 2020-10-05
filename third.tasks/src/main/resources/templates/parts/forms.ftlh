@@ -1,33 +1,73 @@
-<#macro login path>
+<#macro login path isRegisterForm>
     <form action="${path}" method="post">
-        <div><label> User Name : <input type="text" name="username"/> </label></div>
-        <div><label> Password: <input type="password" name="password"/> </label></div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"> User Name :</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="User name" name="username"/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"> Password :</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control" placeholder="Password" name="password"/>
+            </div>
+        </div>
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <div><input type="submit" value="Sign In"/></div>
+        <#if !isRegisterForm> <a href="/registration"> Add new user</a></#if>
+        <button class="btn btn-primary" type="submit">
+            <#if isRegisterForm> Create<#else>Sign In</#if>
+        </button>
+
     </form>
 </#macro>
 <#macro logout>
     <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <input type="submit" value="Sign Out"/>
+        <button class="btn btn-primary" type="submit">
+            Sign Out
+        </button>
     </form>
 </#macro>
 
 <#macro add>
-    <form method="post" action="/add" enctype="multipart/form-data">
-        <input type="text" name="text" placeholder="Введите сообщение"/>
-        <input type="text" name="tag" placeholder="Тэг">
-        <input type="file" name="file">
-        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button type="submit">Добавить сообщение</button>
-    </form>
+    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+       aria-controls="collapseExample">
+        Add new message
+    </a>
+    <div class="collapse" id="collapseExample">
+        <div class="form=group mt-3">
+            <form method="post" action="/add" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="text" placeholder="Write message"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="tag" placeholder="Tag">
+                </div>
+                <div class="form-group">
+                    <div class="custom-file">
+                        <input type="file" name="file" id="customFile">
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                    </div>
+                </div>
+                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Добавить сообщение</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </#macro>
 
 <#macro filter>
-    <form method="get" action="/main">
-        <input type="text" name="tag" value="${RequestParameters.tag!""}">
-        <button type="submit">Найти</button>
-    </form>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <form method="get" action="/main" class="form-inline">
+                <input type="text" name="tag" value="${RequestParameters.tag!""}" placeholder="Search by tag">
+                <button type="submit" class="btn btn-primary ml-2">Search</button>
+            </form>
+        </div>
+    </div>
 </#macro>
 
 <#macro editor>
