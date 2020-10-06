@@ -1,14 +1,20 @@
 package org.example.third.tasks.model;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
+    @NotBlank(message = "Please fill the message")
+    @Length(max = 2048, message = "Message too long (more then 2kB)")
     private String text;
+    @Length(max = 255, message = "Message too long (more then 255)")
     private String tag;
     private String filename;
 
@@ -38,11 +44,11 @@ public class Message {
         this.author = user;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

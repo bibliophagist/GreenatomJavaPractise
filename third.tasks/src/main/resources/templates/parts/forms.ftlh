@@ -3,25 +3,58 @@
         <div class="form-group row">
             <label class="col-sm-2 col-form-label"> User Name :</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" placeholder="User name" name="username"/>
+                <input type="text" class="form-control ${(usernameError??)?string('is-invalid', '')}"
+                       value="<#if user??>${user.username}</#if>" placeholder="User name" name="username"/>
+                <#if usernameError??>
+                    <div class="invalid-feedback">
+                        ${usernameError}
+                    </div>
+                </#if>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"> Password :</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control ${(passwordError??)?string('is-invalid', '')}"
+                       placeholder="Password" name="password"/>
+                <#if passwordError??>
+                    <div class="invalid-feedback">
+                        ${passwordError}
+                    </div>
+                </#if>
             </div>
         </div>
         <#if isRegisterForm>
             <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Password :</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control ${(password2Error??)?string('is-invalid', '')}"
+                           placeholder="Retype password" name="password2"/>
+                    <#if password2Error??>
+                        <div class="invalid-feedback">
+                            ${password2Error}
+                        </div>
+                    </#if>
+                </div>
+            </div>
+            <div class="form-group row">
                 <label class="col-sm-2 col-form-label"> Email :</label>
                 <div class="col-sm-10">
-                    <input type="email" class="form-control" placeholder="enter email" name="email"/>
+                    <input type="email" class="form-control ${(emailError??)?string('is-invalid', '')}"
+                           value="<#if user??>${user.email}</#if>" placeholder="enter email" name="email"/>
+                    <#if emailError??>
+                        <div class="invalid-feedback">
+                            ${emailError}
+                        </div>
+                    </#if>
                 </div>
             </div>
         </#if>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label"> Password :</label>
-            <div class="col-sm-10">
-                <input type="password" class="form-control" placeholder="Password" name="password"/>
-            </div>
-        </div>
+
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <#if !isRegisterForm> <a href="/registration"> Add new user</a></#if>
+        <#if !isRegisterForm>
+            <a href="/registration">Add new user</a>
+        </#if>
         <button class="btn btn-primary" type="submit">
             <#if isRegisterForm> Create<#else>Sign In</#if>
         </button>
@@ -42,14 +75,26 @@
        aria-controls="collapseExample">
         Add new message
     </a>
-    <div class="collapse" id="collapseExample">
+    <div class="collapse <#if message??>show</#if>" id="collapseExample">
         <div class="form=group mt-3">
             <form method="post" action="/add" enctype="multipart/form-data">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="text" placeholder="Write message"/>
+                    <input type="text" class="form-control ${(textError??)?string('is-invalid', '')}"
+                           value="<#if message??>${message.text}</#if>" name="text" placeholder="Write message"/>
+                    <#if textError??>
+                        <div class="invalid-feedback">
+                            ${textError}
+                        </div>
+                    </#if>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" name="tag" placeholder="Tag">
+                    <input type="text" class="form-control"
+                           value="<#if message??>${message.tag}</#if>" name="tag" placeholder="Tag">
+                    <#if textError??>
+                        <div class="invalid-feedback">
+                            ${textError}
+                        </div>
+                    </#if>
                 </div>
                 <div class="form-group">
                     <div class="custom-file">
