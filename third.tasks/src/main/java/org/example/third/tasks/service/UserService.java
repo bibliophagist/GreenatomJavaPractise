@@ -3,6 +3,7 @@ package org.example.third.tasks.service;
 import org.example.third.tasks.model.Role;
 import org.example.third.tasks.model.User;
 import org.example.third.tasks.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
+
+    @Value("${myhostname}")
+    private String hostname;
 
     private final UserRepository userRepository;
     private final MailSender mailSender;
@@ -62,8 +66,9 @@ public class UserService implements UserDetailsService {
     private void sendVerificationLink(User user) {
         if (!StringUtils.isEmpty(user.getEmail())) {
             String message = String.format("Hello, %s! \n" +
-                            "Welcome to Third Tasks. Please visit next link http://localhost:8080/activate/%s",
+                            "Welcome to Third Tasks. Please visit next link http://%s/activate/%s",
                     user.getUsername(),
+                    hostname,
                     user.getActivationCode()
             );
             mailSender.send(user.getEmail(), "Activation code", message);
@@ -105,8 +110,8 @@ public class UserService implements UserDetailsService {
     public void updateProfile(User user, String password, String email) {
         String emailCurrent = user.getEmail();
 
-        //TODO delete orange part?
-        boolean isEmailValidAndChanged = (email != null && !email.equals(emailCurrent)) || (emailCurrent != null && !emailCurrent.equals(email));
+        boolean isEmailValidAndChanged = (email != null && !email.equals(emailCurrent))
+                || (emailCurrent != null && !emailCurrent.equals(email));
 
         if (isEmailValidAndChanged) {
             user.setEmail(email);
@@ -116,7 +121,7 @@ public class UserService implements UserDetailsService {
         }
 
         if (!StringUtils.isEmpty(password) && !user.getPassword().equals(password)) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(password));
         }
 
         userRepository.save(user);
