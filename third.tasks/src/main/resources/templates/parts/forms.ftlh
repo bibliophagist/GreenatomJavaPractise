@@ -1,3 +1,4 @@
+<#include "security.ftlh">
 <#macro login path isRegisterForm>
     <form action="${path}" method="post">
         <div class="form-group row">
@@ -72,8 +73,7 @@
 <#macro logout>
     <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button class="btn btn-primary" type="submit">
-            Sign Out
+        <button class="btn btn-primary" type="submit"><#if user??>Sign Out<#else>Log in</#if>
         </button>
     </form>
 </#macro>
@@ -82,7 +82,7 @@
     <div class="form-row">
         <div class="form-group col-md-6">
             <form method="get" action="/main" class="form-inline">
-                <input type="text" name="tag" value="${RequestParameters.tag!""}" placeholder="Search by tag">
+                <input type="text" name="tag" value="${RequestParameters.tag!""}" placeholder="Search by tag"/>
                 <button type="submit" class="btn btn-primary ml-2">Search</button>
             </form>
         </div>

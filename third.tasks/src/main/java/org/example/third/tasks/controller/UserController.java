@@ -5,18 +5,15 @@ import org.example.third.tasks.model.Role;
 import org.example.third.tasks.model.User;
 import org.example.third.tasks.repository.MessageRepository;
 import org.example.third.tasks.service.UserService;
-import org.example.third.tasks.utils.ControllerUtils;
 import org.example.third.tasks.utils.MessageUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -81,6 +78,10 @@ public class UserController {
                                @RequestParam(required = false) Message message) {
         Set<Message> messages = user.getMessages();
 
+        model.addAttribute("userChannel", user);
+        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+        model.addAttribute("subscribersCount", user.getSubscribers().size());
+        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser));
         model.addAttribute("messages", messages);
         model.addAttribute("message", message);
         model.addAttribute("isCurrentUser", currentUser.equals(user));
@@ -108,5 +109,39 @@ public class UserController {
         }
         return "redirect:/user/messages/" + user;
 
+    }
+
+    @GetMapping("subscribe/{user}")
+    public String subscribe(@AuthenticationPrincipal User currentUser,
+                            @PathVariable User user,
+                            Model model) {
+        userService.subscribe(currentUser, user);
+
+        return "redirect:/user/messages/" + user.getId();
+    }
+
+    @GetMapping("unsubscribe/{user}")
+    public String unsubscribe(@AuthenticationPrincipal User currentUser,
+                              @PathVariable User user,
+                              Model model) {
+        userService.unsubscribe(currentUser, user);
+
+        return "redirect:/user/messages/" + user.getId();
+    }
+
+    @GetMapping("{type}/{user}/list")
+    public String userList(Model model,
+                           @PathVariable User user,
+                           @PathVariable String type) {
+        model.addAttribute("userChannel", user);
+        model.addAttribute("type", type);
+
+        if ("subscriptions".equals(type)) {
+            model.addAttribute("users", user.getSubscriptions());
+        } else {
+            model.addAttribute("users", user.getSubscribers());
+        }
+
+        return "subscriptions";
     }
 }

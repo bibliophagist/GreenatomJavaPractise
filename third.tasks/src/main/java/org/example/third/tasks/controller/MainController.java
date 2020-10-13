@@ -7,6 +7,10 @@ import org.example.third.tasks.utils.ControllerUtils;
 import org.example.third.tasks.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,14 +35,18 @@ public class MainController {
     }
 
     @GetMapping("/main")
-    public String main(@RequestParam(required = false, defaultValue = "") String tag, Model model) {
-        Iterable<Message> messages;
+    public String main(@RequestParam(required = false, defaultValue = "") String tag,
+                       Model model,
+                       @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Message> pageOfMessages;
 
         if (tag != null && tag.isEmpty()) {
-            messages = messageRepository.findAll();
-        } else messages = messageRepository.findByTag(tag);
+            pageOfMessages = messageRepository.findAll(pageable);
+        } else pageOfMessages = messageRepository.findByTag(tag, pageable);
 
-        model.addAttribute("messages", messages);
+        model.addAttribute("page", pageOfMessages);
+        model.addAttribute("url", "/main");
+
         model.addAttribute("filter", tag);
 
 

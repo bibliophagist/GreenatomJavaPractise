@@ -1,10 +1,13 @@
 package org.example.third.tasks.repository;
 
 import org.example.third.tasks.model.Message;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
+public interface MessageRepository extends CrudRepository<Message, Long> {
 
-public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findByTag(String tag);
+    Page<Message> findAll(Pageable pageable);
+
+    Page<Message> findByTag(String tag, Pageable pageable);
 }
