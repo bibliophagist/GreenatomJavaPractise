@@ -4,11 +4,13 @@ import org.example.third.tasks.config.converter.StringToMessageConverter;
 import org.example.third.tasks.config.converter.StringToUserConverter;
 import org.example.third.tasks.repository.MessageRepository;
 import org.example.third.tasks.service.UserService;
+import org.example.third.tasks.utils.RedirectInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -38,6 +40,11 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new StringToUserConverter(userService));
         registry.addConverter(new StringToMessageConverter(messageRepository));
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new RedirectInterceptor());
     }
 
     @Override
