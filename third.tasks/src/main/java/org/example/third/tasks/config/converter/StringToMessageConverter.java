@@ -11,7 +11,6 @@ public class StringToMessageConverter implements Converter<String, Message> {
         this.messageRepository = messageRepository;
     }
 
-
     //TODO resolve problem with null userId and isPresent check
     @Override
     public Message convert(String userId) {
