@@ -23,7 +23,9 @@
     <modules>
         <module>first.tasks</module>
         <module>second.tasks</module>
-        <module>third.tasks</module>
+        <module>third.tasks.part.one</module>
+        <module>third.tasks.part.two</module>
+        <module>third.tasks.part.two</module>
     </modules>
 
     <dependencies>
