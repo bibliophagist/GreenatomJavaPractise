@@ -2,6 +2,7 @@ package org.example.third.tasks.part.two.controller;
 
 import org.example.third.tasks.part.two.model.User;
 import org.example.third.tasks.part.two.repository.MessageRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,9 @@ import java.util.HashMap;
 public class MainController {
     private final MessageRepository messageRepository;
 
+    @Value("${spring.profiles.active}")
+    private String profile;
+
     public MainController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
     }
@@ -25,6 +29,7 @@ public class MainController {
         data.put("profile", user);
         data.put("messages", messageRepository.findAll());
         model.addAttribute("frontendData", data);
+        model.addAttribute("isDevMode", "dev".equals(profile));
         return "index";
     }
 }
