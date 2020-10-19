@@ -23,7 +23,7 @@ public class WsSender {
     public <T> BiConsumer<EventType, T> getSender(ObjectType objectType, Class view) {
         ObjectWriter writer = mapper.setConfig(mapper.getSerializationConfig()).writerWithView(view);
         return (EventType eventType, T payload) -> {
-            String value = null;
+            String value;
             try {
                 value = writer.writeValueAsString(payload);
             } catch (Exception e) {
