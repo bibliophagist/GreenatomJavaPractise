@@ -1,15 +1,19 @@
 <template>
     <v-layout align-space-around justify-start column>
-        <message-form :messageAttr="message"/>
+        <message-form :messages="messages" :messageAttr="message"/>
         <message-row v-for="message in sortedMessages"
                      :key="message.id"
                      :message="message"
-                     :editMessage="editMessage"/>
+                     :editMessage="editMessage"
+                     :deleteMessage="deleteMessage"
+                     :messages="messages"/>
     </v-layout>
 </template>
+
 <script>
     import MessageRow from 'components/messages/MessageRow.vue'
     import MessageForm from 'components/messages/MessageForm.vue'
+    import messagesApi from 'api/messages'
 
     export default {
         props: ['messages'],
@@ -32,7 +36,7 @@
                 this.message = message
             },
             deleteMessage(message) {
-                this.$resource('/message{/id}').remove({id: message.id}).then(result => {
+                messagesApi.remove(message.id).then(result => {
                     if (result.ok) {
                         this.messages.splice(this.messages.indexOf(message), 1)
                     }

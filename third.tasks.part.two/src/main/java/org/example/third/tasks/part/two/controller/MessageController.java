@@ -1,24 +1,29 @@
 package org.example.third.tasks.part.two.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.example.third.tasks.part.two.dto.EventType;
+import org.example.third.tasks.part.two.dto.ObjectType;
 import org.example.third.tasks.part.two.model.Message;
 import org.example.third.tasks.part.two.model.Views;
 import org.example.third.tasks.part.two.repository.MessageRepository;
+import org.example.third.tasks.part.two.utils.WsSender;
 import org.springframework.beans.BeanUtils;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @RestController
 @RequestMapping("message")
 public class MessageController {
     private final MessageRepository messageRepository;
 
-    public MessageController(MessageRepository messageRepository) {
+    private final BiConsumer<EventType, Message> wsSender;
+
+    public MessageController(MessageRepository messageRepository, WsSender wsSender) {
         this.messageRepository = messageRepository;
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdName.class);
     }
 
     @GetMapping
@@ -35,24 +40,23 @@ public class MessageController {
     @PostMapping
     public Message addMessage(@RequestBody Message message) {
         message.setCreationDate(LocalDateTime.now());
-        return messageRepository.save(message);
+        Message messageWithDate = messageRepository.save(message);
+        wsSender.accept(EventType.CREATE, messageWithDate);
+        return messageWithDate;
     }
 
     @PutMapping("{id}")
     public Message update(@PathVariable("id") Message messageFromDb, @RequestBody Message message) {
         BeanUtils.copyProperties(message, messageFromDb, "id");
-        return messageRepository.save(messageFromDb);
+        Message updatedMessage = messageRepository.save(messageFromDb);
+        wsSender.accept(EventType.UPDATE, updatedMessage);
+        return updatedMessage;
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Message message) {
         messageRepository.delete(message);
+        wsSender.accept(EventType.REMOVE, message);
     }
 
-    @MessageMapping("/changeMessage")
-    @SendTo("/topic/activity")
-    public Message changeMessage(Message message) throws Exception {
-
-        return messageRepository.save(message);
-    }
 }

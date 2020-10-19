@@ -1,21 +1,18 @@
 import Vue from 'vue'
-import VueResource from 'vue-resource'
+import Vuetify from "vuetify"
+import 'api/resource'
 import App from 'pages/App.vue'
 import {connect} from "./utils/ws";
 import 'vuetify/dist/vuetify.min.css'
-import Vuetify from "vuetify"
+
 
 import '@mdi/font/css/materialdesignicons.css'
 
 if (frontendData.profile) {
-    connect();
+    connect()
 }
-Vue.use(VueResource)
-Vue.use(Vuetify, {
-    iconfont: 'mdi'
-})
 
-
+Vue.use(Vuetify)
 
 new Vue({
     el: '#app',

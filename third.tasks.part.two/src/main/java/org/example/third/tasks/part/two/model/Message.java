@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonView(Views.IdName.class)
+    @JsonView(Views.Id.class)
     private Long id;
     @JsonView(Views.IdName.class)
     private String text;
