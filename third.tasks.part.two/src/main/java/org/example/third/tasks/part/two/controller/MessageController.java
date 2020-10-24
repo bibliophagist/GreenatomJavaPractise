@@ -5,6 +5,7 @@ import org.example.third.tasks.part.two.dto.EventType;
 import org.example.third.tasks.part.two.dto.MetaDto;
 import org.example.third.tasks.part.two.dto.ObjectType;
 import org.example.third.tasks.part.two.model.Message;
+import org.example.third.tasks.part.two.model.User;
 import org.example.third.tasks.part.two.model.Views;
 import org.example.third.tasks.part.two.repository.MessageRepository;
 import org.example.third.tasks.part.two.utils.WsSender;
@@ -13,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -51,9 +53,10 @@ public class MessageController {
     }
 
     @PostMapping
-    public Message addMessage(@RequestBody Message message) throws IOException {
+    public Message addMessage(@RequestBody Message message, @AuthenticationPrincipal User user) throws IOException {
         message.setCreationDate(LocalDateTime.now());
         fillMetaDto(message);
+        message.setAuthor(user);
         Message messageWithDate = messageRepository.save(message);
         wsSender.accept(EventType.CREATE, messageWithDate);
         return messageWithDate;
