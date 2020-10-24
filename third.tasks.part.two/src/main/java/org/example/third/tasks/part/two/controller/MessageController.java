@@ -64,7 +64,7 @@ public class MessageController {
 
     @PutMapping("{id}")
     public Message update(@PathVariable("id") Message messageFromDb, @RequestBody Message message) throws IOException {
-        BeanUtils.copyProperties(message, messageFromDb, "id");
+        BeanUtils.copyProperties(message, messageFromDb, "id", "comments", "author");
         fillMetaDto(messageFromDb);
         Message updatedMessage = messageRepository.save(messageFromDb);
         wsSender.accept(EventType.UPDATE, updatedMessage);
