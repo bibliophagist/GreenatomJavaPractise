@@ -10,7 +10,7 @@ export default new Vuex.Store({
         profile: frontendData.profile
     },
     getters: {
-        sortedMessages: state => state.messages.sort((a, b) => -(a.id - b.id))
+        sortedMessages: state => (state.messages || []).sort((a, b) => -(a.id - b.id))
     },
     mutations: {
         addMessageMutation(state, message) {
@@ -28,7 +28,7 @@ export default new Vuex.Store({
                 ...state.messages.slice(updateIndex + 1)
             ]
         },
-         removeMessageMutation(state, message) {
+        removeMessageMutation(state, message) {
             const deletionIndex = state.messages.findIndex(item => item.id === message.id)
 
             if (deletionIndex > -1) {
