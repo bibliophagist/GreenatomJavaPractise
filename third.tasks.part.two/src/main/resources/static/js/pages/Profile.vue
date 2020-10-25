@@ -19,7 +19,7 @@
                     </v-flex>
                 </v-layout>
                 <v-btn v-if="!isMyProfile" @click="changeSubscription">
-                    {{isISubscribed ?  'Unsubscribe' : 'Subscribe'}}
+                    {{isISubscribed ? 'Unsubscribe' : 'Subscribe'}}
                 </v-btn>
             </v-flex>
         </v-layout>
@@ -28,6 +28,7 @@
 
 <script>
     import profileApi from 'api/profile'
+
     export default {
         name: 'Profile',
         data() {
@@ -43,8 +44,7 @@
             isISubscribed() {
                 return this.profile.subscribers &&
                     this.profile.subscribers.find(subscription => {
-                        // change from subscription.id => subscription why is that needed?
-                        return subscription === this.$store.state.profile.id
+                        return subscription.subscriber === this.$store.state.profile.id
                     })
             }
         },
