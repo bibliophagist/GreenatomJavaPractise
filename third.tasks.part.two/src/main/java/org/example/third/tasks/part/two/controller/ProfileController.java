@@ -2,10 +2,13 @@ package org.example.third.tasks.part.two.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.example.third.tasks.part.two.model.User;
+import org.example.third.tasks.part.two.model.UserSubscription;
 import org.example.third.tasks.part.two.model.Views;
 import org.example.third.tasks.part.two.service.ProfileService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("profile")
@@ -33,5 +36,17 @@ public class ProfileController {
         }
 
         return profileService.changeSubscription(channel, subscriber);
+    }
+
+    @GetMapping("get-subscribers/{channelId}")
+    @JsonView(Views.IdName.class)
+    public List<UserSubscription> subscribers(@PathVariable("channelId") User channel) {
+        return profileService.getSubscribers(channel);
+    }
+
+    @PostMapping("change-status/{subscriberId}")
+    @JsonView(Views.IdName.class)
+    public UserSubscription changeSubscriptionData(@AuthenticationPrincipal User channel, @PathVariable("subscriberId") User subscriber) {
+        return profileService.changeSubscriptionStatus(channel, subscriber);
     }
 }
