@@ -1,5 +1,6 @@
 package org.example.third.tasks.part.two.service;
 
+import io.sentry.Sentry;
 import org.example.third.tasks.part.two.dto.EventType;
 import org.example.third.tasks.part.two.dto.MessagePageDto;
 import org.example.third.tasks.part.two.dto.MetaDto;
@@ -44,14 +45,15 @@ public class MessageService {
     public MessageService(MessageRepository messageRepository, UserSubscriptionRepository userSubscriptionRepository, WsSender wsSender) {
         this.messageRepository = messageRepository;
         this.userSubscriptionRepository = userSubscriptionRepository;
-        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdName.class);
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
     }
 
     public Message update(Message messageFromDb, Message message) throws IOException {
-        BeanUtils.copyProperties(message, messageFromDb, "id", "comments", "author");
+        messageFromDb.setText(message.getText());
         fillMetaDto(messageFromDb);
         Message updatedMessage = messageRepository.save(messageFromDb);
         wsSender.accept(EventType.UPDATE, updatedMessage);
+
         return updatedMessage;
     }
 
