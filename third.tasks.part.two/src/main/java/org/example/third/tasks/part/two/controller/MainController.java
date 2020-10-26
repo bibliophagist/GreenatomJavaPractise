@@ -25,7 +25,7 @@ public class MainController {
     private final MessageService messageService;
     private final UserDetailsRepository userDetailsRepository;
 
-    @Value("${spring.profiles.active}")
+    @Value("${spring.profiles.active:prod}")
     private String profile;
     private final ObjectWriter messageWriter;
     private final ObjectWriter profileWriter;

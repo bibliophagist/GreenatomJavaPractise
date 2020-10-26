@@ -53,3 +53,7 @@ node_modules
 
 ### VS Code ###
 .vscode/
+static/js
+
+# local project ignore
+/third.tasks.part.two/src/main/resources/static/js/
